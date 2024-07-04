@@ -63,7 +63,7 @@ const Home = (args) => {
   const getallContacts = () => {
     const userId = JSON.parse(localStorage.getItem('userDetails'))
     console.log(userId, 'userId')
-    fetch('http://localhost:3003/api/getContacts', {
+    fetch('https://demo-backend-1-qtq9.onrender.com/api/getContacts', {
       method: "POST",
       headers: {
         'Content-Type': 'application/json', // Ensure the headers are specified
@@ -133,7 +133,7 @@ const Home = (args) => {
       const userId = JSON.parse(localStorage.getItem('userDetails'))
       console.log(createuserform, 'createuserform')
       const token = localStorage.getItem("token")
-      const response = await fetch('http://localhost:3003/api/createContact', {
+      const response = await fetch('https://demo-backend-1-qtq9.onrender.com/api/createContact', {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -160,7 +160,7 @@ const Home = (args) => {
     console.log(e,"localStorage")
     const userId = e._id
     const token = localStorage.getItem("token")
-    const response = await fetch('http://localhost:3003/api/deleteContact', {
+    const response = await fetch('https://demo-backend-1-qtq9.onrender.com/api/deleteContact', {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
