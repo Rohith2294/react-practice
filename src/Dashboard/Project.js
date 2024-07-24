@@ -8,9 +8,8 @@ import { useNavigate } from 'react-router-dom'
 import deleteicon from '../images/delete (1).png'; // Importing an image
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'; // Importing components from Reactstrap for UI
 const Project = (args) => {
-      // React Router navigation
-      const navigate = useNavigate()
-
+  // React Router navigation
+  const navigate = useNavigate()
   const [projectsList, setProjectsList] = useState([]);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
   const [showEditProjectModal, setShowEditProjectModal] = useState(false);
@@ -272,8 +271,8 @@ const Project = (args) => {
       console.log(responseData, 'response')
     }
   }
-  const RouteToTaskWithData =async (projectData)=>{
-    localStorage.setItem('projectData',JSON.stringify(projectData))
+  const RouteToTaskWithData = async (projectData) => {
+    localStorage.setItem('projectData', JSON.stringify(projectData))
     navigate("/Dashboard/Task")
   }
   return (
@@ -296,7 +295,7 @@ const Project = (args) => {
                 <h2>{x.projectName}</h2>
                 <p>{x.description}</p>
                 <p><span>Task Count:</span><span>{x.Tasks.length}</span></p>
-                <div className='row' onClick={()=>RouteToTaskWithData(x)}>
+                <div className='row' onClick={() => RouteToTaskWithData(x)}>
                   <div className='col-md-4' style={styles.cardBottomStyle}>
                     <p><span>Date:</span><span>{format(new Date(x.updatedAt), 'dd-MM-yyyy')}</span></p>
                   </div>
