@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react'; // Importing React, useEffec
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'; // Importing components from Reactstrap for UI
 import image from '../images/edit.png'; // Importing an image
 import image2 from '../images/image.png'
+
 const Home = (args) => {
   // State variables
-  const [viewToggle, setToggle] = useState('AllDetails'); // Toggle between AllDetails and viewDetails views
+  const [viewToggle, setToggle] = useState('AllDetails'); 
   const [clickedData, setClickedData] = useState(''); // Data clicked for viewing details
 
   // State for handling form errors
@@ -20,10 +21,9 @@ const Home = (args) => {
   // edit Contacts data
   const [editusertoggleModal, seteditusertoggle] = useState(false); // State for edit user modal
   const [edituserDatawwww, setEditUserData] = useState([]); // Data of the user to be edited
-  const [edituserForm, setEditUserObject] = useState({ name: '' }); // Form state for edit user
+  const [EditUserObject, setEditUserObject] = useState({ name: '' }); 
 
   const handleModalClose = () => {
-
       setModal(false)
       setShowModal(false);
     
@@ -38,6 +38,7 @@ const Home = (args) => {
 
   // Toggle modal for editing user
   const editusertoggle = (e) => {
+    console.log(edituserDatawwww,"EditProjectDataToEdit")
     setEditUserObject(e);
     setEditUserData(e);
     seteditusertoggle(!editusertoggleModal);
@@ -63,7 +64,7 @@ const Home = (args) => {
   const getallContacts = () => {
     const userId = JSON.parse(localStorage.getItem('userDetails'))
     console.log(userId, 'userId')
-    fetch('https://demo-backend-1-qtq9.onrender.com/api/getContacts', {
+    fetch('http://localhost:3003/api/getContacts', {
       method: "POST",
       headers: {
         'Content-Type': 'application/json', // Ensure the headers are specified
@@ -88,7 +89,7 @@ const Home = (args) => {
   // Handle form submission for Edit User
   const handleeditContactsubmit = async (e) => {
     e.preventDefault();
-    if (!edituserForm.title) {
+    if (!EditUserObject.title) {
       setErrors({ ...errors, message: '' }); // Set an error message if the title is missing
     }
     const token = localStorage.getItem("token")
@@ -99,10 +100,10 @@ const Home = (args) => {
         'Authorization': 'Bearer ' + token, // Ensure there is a 
       },
       body: JSON.stringify({
-        name: edituserForm.name ? edituserForm.name : edituserDatawwww.name,
-        age: edituserForm.age ? edituserForm.age : edituserDatawwww.age,
-        phoneNumber: edituserForm.phoneNumber ? edituserForm.phoneNumber : edituserDatawwww.phoneNumber,
-        address: edituserForm.address ? edituserForm.address : edituserDatawwww.address,
+        name: EditUserObject.name ? EditUserObject.name : edituserDatawwww.name,
+        age: EditUserObject.age ? EditUserObject.age : edituserDatawwww.age,
+        phoneNumber: EditUserObject.phoneNumber ? EditUserObject.phoneNumber : edituserDatawwww.phoneNumber,
+        address: EditUserObject.address ? EditUserObject.address : edituserDatawwww.address,
         id: edituserDatawwww._id
       }),
     });
@@ -133,7 +134,7 @@ const Home = (args) => {
       const userId = JSON.parse(localStorage.getItem('userDetails'))
       console.log(createuserform, 'createuserform')
       const token = localStorage.getItem("token")
-      const response = await fetch('https://demo-backend-1-qtq9.onrender.com/api/createContact', {
+      const response = await fetch('http://localhost:3003/api/createContact', {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -160,7 +161,7 @@ const Home = (args) => {
     console.log(e,"localStorage")
     const userId = e._id
     const token = localStorage.getItem("token")
-    const response = await fetch('https://demo-backend-1-qtq9.onrender.com/api/deleteContact', {
+    const response = await fetch('http://localhost:3003/api/deleteContact', {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
@@ -209,28 +210,28 @@ const Home = (args) => {
         {viewToggle === 'AllDetails' &&
           Contacts.map((x, index) => {
             return (
-              <div className='col-md-3 col-sm-6 mb-3' key={index}>
-                <div className='card'>
-                  <div className='row' style={{ display: 'flex', justifyContent: "space-between" }}>
-                    <div className='col-md-4'>
-                      <img src={image} style={{ width: '20px', marginLeft: '90px' }} onClick={() => editusertoggle(x)} />
-                    </div>
-                    <div className='col-md-4'>
-                      <button className='btn btn' onClick={() => deleteUser(x)}>delete</button>
-                    </div>
+              <div className='col-lg-3 col-md-4 col-sm-6 col-12 mb-3' key={index}>
+              <div className='card'>
+                <div className='row' style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
+                  <div className='col-4 text-center'>
+                    <img src={image} className='img-fluid' style={{ cursor: 'pointer' }} onClick={() => editusertoggle(x)} />
                   </div>
-                  <div className='row'>
-                    <div className='col-md-6'>
-                      <p>{x.name}</p>
-                      <p>{x.age}</p>
-                      <p>{x.phoneNumber}</p>
-                      <p>{x.address}</p>
-                    </div>
-
+                  <div className='col-4 text-center'>
+                    <button className='btn btn' onClick={() => deleteUser(x)}>Delete</button>
                   </div>
-                  <button className='btn btn' onClick={() => handleData(x)}>View Details</button>
                 </div>
+                <div className='row mt-3'>
+                  <div className='col-12'>
+                    <p>Name:<span style={{color:'#003399'}}>{x.name}</span></p>
+                    <p>Age:<span style={{color:'#0033999'}}>{x.age}</span></p>
+                    <p>PhoneNumber:<span style={{color:'#003399'}}>{x.phoneNumber}</span></p>
+                    <p>Address:<span style={{color:'#003399'}}>{x.address}</span></p>
+                  </div>
+                </div>
+                <button className='btn btn w-100' onClick={() => handleData(x)}>View Details</button>
               </div>
+            </div>
+            
             );
           })
         }
@@ -250,26 +251,26 @@ const Home = (args) => {
       }
       {/* Edit user Modal */}
       <Modal isOpen={editusertoggleModal} toggle={editusertoggle} {...args}>
-        <ModalHeader toggle={editusertoggle}>Create Contact</ModalHeader>
+        <ModalHeader toggle={editusertoggle}>Edit Contact</ModalHeader>
         <form>
           <ModalBody>
             <label className='form-label'>Name</label>
-            <input type='text' name='name' value={edituserForm.name} onChange={editUser} className='form-control' placeholder='Please Enter Name' />
+            <input type='text' name='name' value={EditUserObject.name} onChange={editUser} className='form-control' placeholder='Please Enter Name' />
             <label className='form-label'>Age</label>
-            <input type='number' name='age' value={edituserForm.age} onChange={editUser} className='form-control' placeholder='Please Enter Age' />
+            <input type='number' name='age' value={EditUserObject.age} onChange={editUser} className='form-control' placeholder='Please Enter Age' />
             <label className='form-label'>Phone Number</label>
-            <input type='number' name='phoneNumber' value={edituserForm.phoneNumber} onChange={editUser} className='form-control' placeholder='Please Enter Phone Number' />
+            <input type='number' name='phoneNumber' value={EditUserObject.phoneNumber} onChange={editUser} className='form-control' placeholder='Please Enter Phone Number' />
             <label className='form-label'>Address</label>
-            <input type='text' name='address' value={edituserForm.address} onChange={editUser} className='form-control' placeholder='Please Enter Address' />
+            <input type='text' name='address' value={EditUserObject.address} onChange={editUser} className='form-control' placeholder='Please Enter Address' />
           </ModalBody>
           <ModalFooter>
-            <button className='btn btn22 mt-3' onClick={handleeditContactsubmit}>Create Contact</button><br />
+            <button className='btn btn22 mt-3' onClick={handleeditContactsubmit}>Edit Contact</button><br />
           </ModalFooter>
         </form>
       </Modal>
       {/* Create user modal */}
       <Modal isOpen={modal} toggle={toggle} {...args}>
-        <ModalHeader toggle={toggle}>Edit Contact</ModalHeader>
+        <ModalHeader toggle={toggle}>Create Contact</ModalHeader>
         <form>
           <ModalBody>
             <p>{errors.message}</p>
@@ -302,7 +303,7 @@ const Home = (args) => {
                     <div className="col-md-6">
                       <button className="btn btn-success w-100" onClick={handleModalClose}>Ok</button>
                     </div>
-                    <div className="col-md-6">
+                    <div className="col-md-6 mb-3">
                       <button className="btn btn-danger w-100" onClick={handleModalClose}>Cancel</button>
                     </div>
                   </div>
@@ -311,7 +312,7 @@ const Home = (args) => {
                 <>
                   <h5 className="mt-4">{resErrors.error}</h5>
                   <div className="row mt-3">
-                    <div className="col-md-6">
+                    <div className="col-md-6 mb-3">
                       <button className="btn btn w-100" onClick={handleModalClose}>Ok</button>
                     </div>
                     <div className="col-md-6">

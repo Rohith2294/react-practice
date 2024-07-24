@@ -4,11 +4,13 @@ import './App.css';
 import Login from "./Login";
 import Dashboard from "./Dashboard/Dashboard";
 import Home from "./Dashboard/Home";
-import Page1 from "./Dashboard/Page1";
+import Project from "./Dashboard/Project";
 import Signup from "./Signup";
 import Forgotpassword from "./ForgotPassword";
 import CreatePassword from "./CreatePassword";
 import VerifyOtp from "./VerifyOtp";
+import Task from "./Dashboard/Task";
+
 function App() {
   return (
     <BrowserRouter>
@@ -20,7 +22,8 @@ function App() {
         <Route path="/VerifyOtp" element={<VerifyOtp />} />
         <Route path="/Dashboard" element={<Dashboard />} >
           <Route path="/Dashboard/Home" element={<Home />} />
-          <Route path="/Dashboard/Page1" element={<Page1 />} />
+          <Route path="/Dashboard/Project" element={<Project />} />
+          <Route path="/Dashboard/Task" element={<Task />} />
         </Route>
       </Routes>
     </BrowserRouter>

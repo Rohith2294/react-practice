@@ -10,6 +10,20 @@
   position: relative;
 }
 
+@media( max-width :969px){
+  .cardsssss{
+  flex: 0 0 calc(50% -20px);
+  max-width: calc(50% -20px);
+  }
+  
+}
+@media( max-width :600px){
+  .cardsssss{
+  flex: 0 0 100%;
+  max-width: 100%;
+  }
+  
+}
 .main-content {
   padding: 10px 20px 0px 20px;
   position: relative;
@@ -117,4 +131,11 @@ p {
 
 .left-addon input  { padding-left:  30px; }
 .right-addon input { padding-right: 30px; }
+
+
+
+
+
+
+
 
