@@ -26,6 +26,7 @@ const Project = (args) => {
   const [error, setError] = useState('');
   const [alertErrors, setAlertErrors] = useState('none');
   const [textColor, setTextColor] = useState('');
+  const [DeleteId, setDeleteId] = useState([]);
   // create project image upload
   const handleFileChange = (event) => {
     setUploading(true);
@@ -98,9 +99,17 @@ const Project = (args) => {
   const handleAddProjectModalClose = () => {
     setShowAddProjectModal(false);
   };
-  const handleModalClose = () => {
+  const handleModalClose = (x) => {
+  if(x=='ok'){
+    if(DeleteId){
+      deleteProject()
+      setShowModal(false);
+    }
+  }else{
     setShowModal(false);
+  }
   };
+  
   const openCreateProjectModal = () => {
     setShowAddProjectModal(true);
   };
@@ -247,10 +256,13 @@ const Project = (args) => {
       }
     }
   };
-  const deleteProject = async (e) => {
-    console.log(e, "localStorage")
+const  openDeleteModal = async (e)=>{
+    setShowModal(true)
+    setDeleteId(e)
+  }
+  const deleteProject = async () => {
     const userId = JSON.parse(localStorage.getItem('userDetails'))
-    const projectId = e._id
+    const projectId = DeleteId._id
     const token = localStorage.getItem("token")
     const response = await fetch('http://localhost:3003/api/deleteProject', {
       method: "POST",
@@ -262,10 +274,8 @@ const Project = (args) => {
     });
     const responseData = await response.json();
     if (responseData.error) {
-      setShowModal(true)
       setResErrors(responseData)
     } else {
-      setShowModal(true)
       setResErrors(responseData)
       getAllProjects()
       console.log(responseData, 'response')
@@ -285,11 +295,12 @@ const Project = (args) => {
         </div>
         <div className='row'>
           {projectsList.map((x, index) => (
-            <div className='col-md-4'>
+            <div className='col-md-4' style={{    paddingBottom:'20px'
+          }}>
               <div className='card' style={styles.cardStyles} key={index}>
-                <div className='row mb-3' style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div className='row mb-3' style={{ display: 'flex', justifyContent: 'space-between' ,}}>
                   <img onClick={() => openEditProjectModal(x)} src={editicon} style={{ width: '50px' }} />
-                  <img onClick={() => deleteProject(x)} src={deleteicon} style={{ width: '50px' }} />
+                  <img onClick={() => openDeleteModal(x)} src={deleteicon} style={{ width: '50px' }} />
                 </div>
                 <img src={x.image} style={styles.projectImageStyles} alt='Project' />
                 <h2>{x.projectName}</h2>
@@ -322,20 +333,20 @@ const Project = (args) => {
           <div className='modal-content'>
             <div className='modal-body text-center'>
               <img src={image2} alt='Logo' style={{ width: '100px' }} />
-              {resErrors.message && (
-                <>
+              {/* {resErrors.message && (
+                <> */}
                   <h5 className='mt-4'>{resErrors.message}</h5>
                   <div className='row mt-3'>
                     <div className='col-md-6'>
-                      <button className='btn btn-success w-100' onClick={handleModalClose}>Ok</button>
+                      <button className='btn btn-success w-100' onClick={()=>handleModalClose('ok')}>Ok</button>
                     </div>
                     <div className='col-md-6 mb-3'>
-                      <button className='btn btn-danger w-100' onClick={handleModalClose}>Cancel</button>
+                      <button className='btn btn-danger w-100' onClick={()=>handleModalClose('cancel')}>Cancel</button>
                     </div>
                   </div>
-                </>
-              )}
-              {resErrors.error && (
+                {/* </>
+              )} */}
+              {/* {resErrors.error && (
                 <>
                   <h5 className='mt-4'>{resErrors.error}</h5>
                   <div className='row mt-3'>
@@ -347,7 +358,7 @@ const Project = (args) => {
                     </div>
                   </div>
                 </>
-              )}
+              )} */}
             </div>
           </div>
         </div>
@@ -406,6 +417,7 @@ const Project = (args) => {
           </ModalFooter>
         </form>
       </Modal>
+   
     </>
   );
 }
@@ -414,6 +426,7 @@ const styles = {
     backgroundColor: 'white',
     height: '100%',
     width: '100%',
+    paddingBottom:'20px'
   },
   projectImageStyles: {
     width: '10%',

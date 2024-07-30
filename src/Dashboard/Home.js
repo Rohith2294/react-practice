@@ -2,12 +2,31 @@ import React, { useEffect, useState } from 'react'; // Importing React, useEffec
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'; // Importing components from Reactstrap for UI
 import image from '../images/edit.png'; // Importing an image
 import image2 from '../images/image.png'
-
+import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
+import { initializeApp } from 'firebase/app';
+import { getDatabase, ref, set } from "firebase/database";
+import { doc, setDoc,updateDoc ,deleteDoc} from 'firebase/firestore/lite';
+const firebaseConfig = {
+  apiKey: "AIzaSyAhQ7QorOrL7uMyrvMW0PBTdS5i0-QgpAY",
+  authDomain: "fir-project-97865.firebaseapp.com",
+  projectId: "fir-project-97865",
+  storageBucket: "fir-project-97865.appspot.com",
+  messagingSenderId: "555223929233",
+  appId: "1:555223929233:web:3800588d69ce1aeaef0a30",
+  measurementId: "G-0D0WDRG969"
+};
+// Initialize Firebase
+initializeApp(firebaseConfig);
+const db = getFirestore();
+// import db from "firebase"
 const Home = (args) => {
   // State variables
-  const [viewToggle, setToggle] = useState('AllDetails'); 
+  const [viewToggle, setToggle] = useState('AllDetails');
   const [clickedData, setClickedData] = useState(''); // Data clicked for viewing details
 
+  const [color, setColor] = useState('');
+  const [id, setId] = useState('');
+  const [error, setError] = useState('');
   // State for handling form errors
   const [errors, setErrors] = useState([]);
   // State for showing modal
@@ -21,24 +40,76 @@ const Home = (args) => {
   // edit Contacts data
   const [editusertoggleModal, seteditusertoggle] = useState(false); // State for edit user modal
   const [edituserDatawwww, setEditUserData] = useState([]); // Data of the user to be edited
-  const [EditUserObject, setEditUserObject] = useState({ name: '' }); 
-
+  const [EditUserObject, setEditUserObject] = useState({ name: '' });
+  const [data, setData] = useState([]);
   const handleModalClose = () => {
-      setModal(false)
-      setShowModal(false);
-    
+    setModal(false)
+    setShowModal(false);
+
   };
 
   // List of all Contacts
   const [Contacts, setContactslist] = useState([]);
-
-
+  const generateUniqueId = (length = 20) => {
+    // Define the characters to use in the ID
+    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let uniqueId = '';
+    for (let i = 0; i < length; i++) {
+      // Generate a random index to pick a character from the charset
+      const randomIndex = Math.floor(Math.random() * charset.length);
+      uniqueId += charset[randomIndex];
+    }
+    return uniqueId;
+  };
+  const addDataToFirebase = async () => {
+    try {
+      const docId = generateUniqueId(); // Generate or specify your document ID
+      const docRef = doc(db, 'colors', docId); // Create or reference a specific document ID
+      await setDoc(docRef, {
+        color: 'color32222',
+        value: 'red',
+        createdAt: new Date(),
+        _id: docId
+      });
+      console.log('Document successfully written!');
+      fetchData()
+    } catch (e) {
+      console.error('Error adding document: ', e);
+    }
+  };
+  const updateDataToFirebase = async () => {
+    try {
+      const docRef = doc(db, 'colors', 'jRP1DXop3AuEGjTI3ADW'); // Create or reference a specific document ID
+      await updateDoc(docRef, {
+        color: 'colorUpdated',
+        value: 'red',
+        createdAt: new Date(),
+        _id: "yWtHZM7Bj2XG6DO7AvMx"
+      });
+      console.log('Document successfully written!');
+      fetchData()
+    } catch (e) {
+      console.error('Error adding document: ', e);
+    }
+  };
+  const deleteDataFromFirebase = async (id) => {
+    try {
+      const docRef = doc(db, 'colors', id); // Create or reference a specific document ID
+      await deleteDoc(docRef, {
+        _id: id
+      });
+      console.log('Document successfully deleted!');
+      fetchData()
+    } catch (e) {
+      console.error('Error adding document: ', e);
+    }
+  };
   // Toggle modal for creating note
   const toggle = () => setModal(!modal);
 
   // Toggle modal for editing user
   const editusertoggle = (e) => {
-    console.log(edituserDatawwww,"EditProjectDataToEdit")
+    console.log(edituserDatawwww, "EditProjectDataToEdit")
     setEditUserObject(e);
     setEditUserData(e);
     seteditusertoggle(!editusertoggleModal);
@@ -50,10 +121,29 @@ const Home = (args) => {
     setToggle('viewDetails');
     setClickedData(e);
   };
-
+  const fetchData = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "colors"));
+      const data = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setData(data);
+      console.log('Fetched data:', data);
+    } catch (error) {
+      console.error("Error fetching Firestore data:", error.message);
+    }
+  };
   // Fetch all Contacts on component mount
   useEffect(() => {
     getallContacts()
+    // Fetch data from Firestore
+    // Fetch Firestore data
+
+
+    fetchData()
+
+
     setTimeout(() => {
     }, 3000)
   }, []);
@@ -93,7 +183,7 @@ const Home = (args) => {
       setErrors({ ...errors, message: '' }); // Set an error message if the title is missing
     }
     const token = localStorage.getItem("token")
-    const response = await fetch('http://localhost:3001/api/editUser', {
+    const response = await fetch('http://localhost:3003/api/editUser', {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
@@ -158,7 +248,7 @@ const Home = (args) => {
   };
   // Handle form submission for delete User
   const deleteUser = async (e) => {
-    console.log(e,"localStorage")
+    console.log(e, "localStorage")
     const userId = e._id
     const token = localStorage.getItem("token")
     const response = await fetch('http://localhost:3003/api/deleteContact', {
@@ -167,7 +257,7 @@ const Home = (args) => {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token, // Ensure there is a 
       },
-      body: JSON.stringify({ ContactId:userId }),
+      body: JSON.stringify({ ContactId: userId }),
     });
     const responseData = await response.json();
     if (responseData.error) {
@@ -198,7 +288,7 @@ const Home = (args) => {
       <div>
         <div className='row mt-3' style={{ display: 'flex', justifyContent: 'end' }}>
           <div className='col-md-2'>
-            <Button onClick={toggle}>
+            <Button onClick={() => addDataToFirebase()}>
               Create User
             </Button>
           </div>
@@ -206,32 +296,32 @@ const Home = (args) => {
       </div>
       {/* Cards List */}
       <div className='row'>
-        {Contacts.length == 0 && <p style={{ textAlign: 'center', color: 'red' }}>No Contacts Found</p>}
+        {data.length == 0 && <p style={{ textAlign: 'center', color: 'red' }}>No data Found</p>}
         {viewToggle === 'AllDetails' &&
-          Contacts.map((x, index) => {
+          data.map((x, index) => {
             return (
               <div className='col-lg-3 col-md-4 col-sm-6 col-12 mb-3' key={index}>
-              <div className='card'>
-                <div className='row' style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
-                  <div className='col-4 text-center'>
-                    <img src={image} className='img-fluid' style={{ cursor: 'pointer' }} onClick={() => editusertoggle(x)} />
+                <div className='card'>
+                  <div className='row' style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
+                    <div className='col-4 text-center'>
+                      <img src={image} className='img-fluid' style={{ cursor: 'pointer' }} onClick={() => updateDataToFirebase(x)} />
+                    </div>
+                    <div className='col-4 text-center'>
+                      <button className='btn btn' onClick={() => deleteDataFromFirebase(x._id)}>Delete</button>
+                    </div>
                   </div>
-                  <div className='col-4 text-center'>
-                    <button className='btn btn' onClick={() => deleteUser(x)}>Delete</button>
+                  <div className='row mt-3'>
+                    <div className='col-12'>
+                      <p>Name:<span style={{ color: '#003399' }}>{x.color}</span></p>
+                      <p>Value:<span style={{ color: '#003399' }}>{x.value}</span></p>
+                      {/* <p>PhoneNumber:<span style={{ color: '#003399' }}>{x.phoneNumber}</span></p>
+                      <p>Address:<span style={{ color: '#003399' }}>{x.address}</span></p> */}
+                    </div>
                   </div>
+                  <button className='btn btn w-100' onClick={() => handleData(x)}>View Details</button>
                 </div>
-                <div className='row mt-3'>
-                  <div className='col-12'>
-                    <p>Name:<span style={{color:'#003399'}}>{x.name}</span></p>
-                    <p>Age:<span style={{color:'#0033999'}}>{x.age}</span></p>
-                    <p>PhoneNumber:<span style={{color:'#003399'}}>{x.phoneNumber}</span></p>
-                    <p>Address:<span style={{color:'#003399'}}>{x.address}</span></p>
-                  </div>
-                </div>
-                <button className='btn btn w-100' onClick={() => handleData(x)}>View Details</button>
               </div>
-            </div>
-            
+
             );
           })
         }

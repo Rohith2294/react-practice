@@ -41,7 +41,7 @@ const VerifyOtp = () => {
 
         try {
             const { otp } = VerifyOtpValues;
-            const response = await fetch('http://localhost:3001/api/verifyOtp', {
+            const response = await fetch('http://localhost:3003/api/verifyOtp', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

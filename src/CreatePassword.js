@@ -52,7 +52,7 @@ const CreatePassword = () => {
             try {
                 // API call for signup
                 const { otp, newPassword, ConfirmPassword } = CreatePasswordValues;
-                const response = await fetch('http://localhost:3001/api/CreatePassword', {
+                const response = await fetch('http://localhost:3003/api/CreatePassword', {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"

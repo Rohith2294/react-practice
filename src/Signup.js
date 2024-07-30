@@ -62,7 +62,7 @@ const Signup = () => {
             const { name, email, phonenumber, password } = SignupFormvalues
             const passwordformat = Number(phonenumber)
             console.log(passwordformat, 'passwordformat')
-            const response = await fetch('http://localhost:3001/api/signup', {
+            const response = await fetch('http://localhost:3003/api/signup', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

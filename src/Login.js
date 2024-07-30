@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import image2 from './images/image.png';
 
 const Login = () => {
-
+console.log('login')
     // React Router navigation
     const navigate = useNavigate()
 
